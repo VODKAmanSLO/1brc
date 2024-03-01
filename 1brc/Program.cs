@@ -4,7 +4,7 @@ using System.Globalization;
 Console.WriteLine("Starting!");
 var startTime = Stopwatch.StartNew();
 
-var lines = File.ReadLines("../../../../data/measurements.txt");
+var lines = File.ReadLines(@"C:\code\1brc\data\measurements.txt");
 
 var dict = new Dictionary<string, float[]>();
 
@@ -41,7 +41,7 @@ var orderedDict = dict.OrderBy(d => d.Key);
 foreach (var (key, temperature) in orderedDict)
 {
     var avg = temperature[2] / temperature[3];
-    Console.WriteLine($"{key}={temperature[0]}/{avg:n2}/{temperature[1]}");
+    Console.WriteLine($"{key}={temperature[0]}/{avg:n1}/{temperature[1]}");
 }
 
 Console.WriteLine($"End time: {startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
