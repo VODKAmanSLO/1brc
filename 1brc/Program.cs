@@ -4,8 +4,8 @@ using System.Globalization;
 Console.WriteLine("Starting!");
 var startTime = Stopwatch.StartNew();
 
-var lines = File.ReadLines(@"C:\code\1brc\data\measurements.txt");
-
+var lines = File.ReadLines(@"C:\code\1brcFork\measurements.txt");
+var counter = 0;
 var dict = new Dictionary<string, float[]>();
 
 foreach (var line in lines)
@@ -35,16 +35,26 @@ foreach (var line in lines)
     }
 
     value[3]++;
+
+    counter++;
+    if (counter % 10000000 == 0)
+    {
+        Console.WriteLine($"Processed {counter / 1000000}M lines");
+    }
 }
+
+Console.WriteLine($"After reading: {startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
 
 var orderedDict = dict.OrderBy(d => d.Key);
-foreach (var (key, temperature) in orderedDict)
+foreach (var (key, value) in orderedDict)
 {
-    var avg = temperature[2] / temperature[3];
-    Console.WriteLine($"{key}={temperature[0]}/{avg:n1}/{temperature[1]}");
+    var avg = value[2] / value[3];
+    Console.WriteLine($"{key}={value[0]}/{avg:n1}/{value[1]}");
 }
 
-Console.WriteLine($"End time: {startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
+Console.WriteLine(
+    $"End time: {startTime.Elapsed.Minutes}:{startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
+Console.WriteLine($"Counters: {counter}");
 return;
 
 static (string Name, string Temp) SplitString(string input)
