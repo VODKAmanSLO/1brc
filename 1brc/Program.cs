@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
 
 Console.WriteLine("Starting!");
 var startTime = Stopwatch.StartNew();
@@ -11,7 +10,7 @@ var dict = new Dictionary<string, float[]>();
 foreach (var line in lines)
 {
     var (name, tempString) = SplitString(line);
-    var temperature = float.Parse(tempString, CultureInfo.InvariantCulture);
+    var temperature = ParseFloat(tempString);
 
     dict.TryGetValue(name, out var value);
     if (value == null)
@@ -37,10 +36,15 @@ foreach (var line in lines)
     value[3]++;
 
     counter++;
-    if (counter % 10000000 == 0)
+    if (counter % 100000000 == 0)
     {
         Console.WriteLine($"Processed {counter / 1000000}M lines");
     }
+
+    // if (counter == 100000000)
+    // {
+    //     break;
+    // }
 }
 
 Console.WriteLine($"After reading: {startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
@@ -63,4 +67,42 @@ static (string Name, string Temp) SplitString(string input)
     var name = input[..separatorIndex];
     var temp = input[(separatorIndex + 1)..];
     return (name, temp);
+}
+
+// Create a super optimized method for parsing strings to floats. Don't worry about readability, we need speed!
+// The input will always be in the format "31.4", but may sometimes include a sign, like "-31.4".
+// Don't forget about the decimal point! 
+static float ParseFloat(string input)
+{
+    var result = 0f;
+    var sign = 1;
+    var decimalPoint = false;
+    var decimalMultiplier = 0.1f;
+
+    for (var i = 0; i < input.Length; i++)
+    {
+        var c = input[i];
+        if (c == '-')
+        {
+            sign = -1;
+        }
+        else if (c == '.')
+        {
+            decimalPoint = true;
+        }
+        else
+        {
+            if (decimalPoint)
+            {
+                result += (c - '0') * decimalMultiplier;
+                decimalMultiplier *= 0.1f;
+            }
+            else
+            {
+                result = result * 10 + (c - '0');
+            }
+        }
+    }
+
+    return result * sign;
 }
