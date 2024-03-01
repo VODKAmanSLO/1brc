@@ -1,15 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using _1brc;
 
 Console.WriteLine("Starting!");
 var startTime = Stopwatch.StartNew();
 
 var lines = File.ReadLines("../../../../data/measurements.txt");
 
-var dict = new Dictionary<string, TempInfo>();
+var dict = new Dictionary<string, float[]>();
 
 foreach (var line in lines)
 {
@@ -19,29 +16,32 @@ foreach (var line in lines)
     dict.TryGetValue(name, out var value);
     if (value == null)
     {
-        dict.Add(name, new TempInfo
-        {
-            MinTemp = temperature,
-            MaxTemp = temperature,
-            Sum = temperature,
-            Counter = 1
-        });
+        dict.Add(name, [
+            temperature, temperature, temperature, 1
+        ]);
 
         continue;
     }
 
-    value.Sum += temperature;
-    if (value.MinTemp > temperature) value.MinTemp = temperature;
-    if (value.MaxTemp < temperature) value.MaxTemp = temperature;
+    value[2] += temperature;
+    if (value[0] > temperature)
+    {
+        value[0] = temperature;
+    }
 
-    value.Counter++;
+    if (value[1] < temperature)
+    {
+        value[1] = temperature;
+    }
+
+    value[3]++;
 }
 
 var orderedDict = dict.OrderBy(d => d.Key);
 foreach (var (key, temperature) in orderedDict)
 {
-    var avg = temperature.Sum / temperature.Counter;
-    Console.WriteLine($"{key}={temperature.MinTemp}/{avg:n2}/{temperature.MaxTemp}");
+    var avg = temperature[2] / temperature[3];
+    Console.WriteLine($"{key}={temperature[0]}/{avg:n2}/{temperature[1]}");
 }
 
 Console.WriteLine($"End time: {startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
