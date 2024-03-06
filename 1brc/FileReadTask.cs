@@ -52,24 +52,18 @@ public class FileReadTask
                 }
 
                 value[3]++;
-
-                // counter++;
-                // if (counter % 100000000 == 0)
-                // {
-                //     Console.WriteLine($"Processed {counter / 1000000}M lines");
-                // }
             }
 
             currentLine++;
         }
     }
 
-
     private static (string Name, string Temp) SplitString(string input)
     {
         var separatorIndex = input.IndexOf(';');
         var name = input[..separatorIndex];
         var temp = input[(separatorIndex + 1)..];
+
         return (name, temp);
     }
 
@@ -80,9 +74,8 @@ public class FileReadTask
         var decimalPoint = false;
         var decimalMultiplier = 0.1f;
 
-        for (var i = 0; i < input.Length; i++)
+        foreach (var c in input)
         {
-            var c = input[i];
             if (c == '-')
             {
                 sign = -1;

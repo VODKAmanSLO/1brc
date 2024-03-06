@@ -26,8 +26,6 @@ foreach (var thread in threads)
     thread.Join();
 }
 
-Console.WriteLine($"After reading: {startTime.Elapsed.Seconds}.{startTime.Elapsed.Milliseconds}");
-
 var orderedDict = sharedDictionary.OrderBy(d => d.Key);
 foreach (var (key, value) in orderedDict)
 {
